@@ -115,6 +115,8 @@ Instead of utilizing heavy external dependencies or Machine Learning, this appli
 
 Backend requires `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET` (32+ random characters), and `CLIENT_URL`. `FRONTEND_ORIGINS` may contain additional comma-separated trusted browser origins. Never put database credentials or JWT secrets in frontend `VITE_` variables.
 
+For cloud MySQL deployments (such as Aiven), enable verified TLS by setting `DB_SSL=true`, `DB_SSL_REJECT_UNAUTHORIZED=true`, and providing the provider's CA certificate via `DB_SSL_CA` (containing the PEM certificate string). When `DB_SSL` is omitted or `false`, unencrypted connections are preserved for local development.
+
 Frontend reads `VITE_API_BASE_URL`; use `/api` behind a same-origin reverse proxy, or a public API URL for a separately hosted API. Local Vite development proxies `/api` to `http://localhost:5000`.
 
 Before deployment, use a least-privilege database account, inspect the live schema read-only, back up and verify a restore to a separate database, and review a versioned migration. `backend/utils/run-migration.js` is metadata preflight only. Do not run historical setup or schema update SQL against an existing database. Order allocation uses earliest-expiry eligible batches, but inventory is not linked to stores in the source schema; store-specific stock allocation remains unsupported until that relationship is verified/designed.

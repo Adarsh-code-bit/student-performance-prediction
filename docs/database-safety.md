@@ -1,7 +1,7 @@
 # Database safety and migration procedure
 
 ## Configuration
-Set `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` in `backend/.env`. Never commit that file. `setup-db.js` is only for an explicitly selected new, empty development database; it must not be used to reset or upgrade an existing database. The migration utility is a read-only preflight and refuses `--apply`.
+Set `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` in `backend/.env`. Never commit that file. For secure cloud deployments (e.g. Aiven MySQL), set `DB_SSL=true`, `DB_SSL_REJECT_UNAUTHORIZED=true`, and provide the cloud provider's root certificate via `DB_SSL_CA` (PEM format). When `DB_SSL` is omitted or `false`, unencrypted connections are used for local development. `setup-db.js` is only for an explicitly selected new, empty development database; it must not be used to reset or upgrade an existing database. The migration utility is a read-only preflight and refuses `--apply`.
 
 ## Backup, restore, and migration checklist
 Before any migration, identify the server and database from the configured connection, inspect tables/columns/role values/foreign keys/indexes/triggers/views using `node backend/utils/run-migration.js`, and review the exact migration SQL. Stop if the live schema differs from its prerequisites.
