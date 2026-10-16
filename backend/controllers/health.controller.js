@@ -10,6 +10,7 @@ const getHealth = async (req, res) => {
     await pool.query('SELECT 1');
     dbStatus = 'connected';
   } catch (err) {
+    console.error('Database connection error in /api/health:', err.message);
     dbStatus = 'disconnected';
   }
 
