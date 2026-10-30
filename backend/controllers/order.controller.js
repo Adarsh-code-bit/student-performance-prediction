@@ -87,19 +87,59 @@ exports.getById = async (req, res) => {
     }
 
     // Get item details with location / rack info for quick-commerce picking
+    // Deterministically select primary inventory location without row duplication or ONLY_FULL_GROUP_BY issues
     const [detailsRows] = await pool.query(`
-      SELECT od.*, p.product_name, p.sku, p.unit, p.image_url,
-             l.rack_number, l.zone, l.location_name
+      SELECT 
+        od.order_detail_id,
+        od.order_id,
+        od.product_id,
+        od.quantity,
+        od.unit_price,
+        od.total_price,
+        p.product_name,
+        p.sku,
+        p.unit,
+        p.barcode,
+        p.image_url,
+        loc.location_name,
+        loc.rack_number,
+        loc.zone,
+        loc.batch_code,
+        loc.expiry_date
       FROM order_details od 
       JOIN product p ON od.product_id = p.product_id
-      LEFT JOIN inventory inv ON p.product_id = inv.product_id AND inv.quantity > 0
-      LEFT JOIN location l ON inv.location_id = l.location_id
+      LEFT JOIN (
+        SELECT 
+          inv.product_id,
+          l.location_name,
+          l.rack_number,
+          l.zone,
+          b.batch_code,
+          b.expiry_date,
+          ROW_NUMBER() OVER (
+            PARTITION BY inv.product_id 
+            ORDER BY (inv.quantity > 0) DESC, inv.quantity DESC, inv.inventory_id ASC
+          ) AS rn
+        FROM inventory inv
+        JOIN location l ON inv.location_id = l.location_id
+        LEFT JOIN batch b ON inv.batch_id = b.batch_id
+      ) loc ON loc.product_id = p.product_id AND loc.rn = 1
       WHERE od.order_id = ?
-      GROUP BY od.order_detail_id
+      ORDER BY od.order_detail_id ASC
     `, [orderId]);
 
     const order = orderRows[0];
-    order.items = detailsRows;
+    order.items = detailsRows.map(row => {
+      let locationCode = null;
+      const rack = (row.rack_number || '').trim();
+      if (rack) {
+        locationCode = rack;
+      }
+      return {
+        ...row,
+        location_code: locationCode
+      };
+    });
 
     res.json({ success: true, data: order });
   } catch (error) {
