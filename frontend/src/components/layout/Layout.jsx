@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
@@ -14,7 +14,14 @@ export default function Layout() {
         <Topbar onMenuToggle={() => setSidebarOpen(prev => !prev)} />
         <main className="main-content">
           <ErrorBoundary>
-            <Outlet />
+            <Suspense fallback={
+              <div className="flex items-center justify-center p-12 text-slate-500">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mr-3"></div>
+                <span>Loading view...</span>
+              </div>
+            }>
+              <Outlet />
+            </Suspense>
           </ErrorBoundary>
         </main>
       </div>

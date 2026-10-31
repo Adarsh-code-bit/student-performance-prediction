@@ -1,37 +1,44 @@
+import { lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/layout/PrivateRoute';
 import Dashboard from './pages/Dashboard';
-
-// Modules from all phases
-import Products from './pages/Products';
-import ProductDetails from './pages/ProductDetails';
-import ProductImport from './pages/ProductImport';
-import Categories from './pages/Categories';
-import Suppliers from './pages/Suppliers';
-import Purchases from './pages/Purchases';
-import Batches from './pages/Batches';
-import Inventory from './pages/Inventory';
-import Locations from './pages/Locations';
-import StockMovements from './pages/StockMovements';
-import Customers from './pages/Customers';
-import Orders from './pages/Orders';
-import Analytics from './pages/Analytics';
 import Login from './pages/Login';
-import Users from './pages/Users';
-import AuditLogs from './pages/AuditLogs';
-import StaffAllocation from './pages/StaffAllocation';
-import StockAudits from './pages/StockAudits';
+
+// Route-level lazy loading to optimize initial load and split bundles
+const Products = lazy(() => import('./pages/Products'));
+const ProductDetails = lazy(() => import('./pages/ProductDetails'));
+const ProductImport = lazy(() => import('./pages/ProductImport'));
+const Categories = lazy(() => import('./pages/Categories'));
+const Suppliers = lazy(() => import('./pages/Suppliers'));
+const Purchases = lazy(() => import('./pages/Purchases'));
+const Batches = lazy(() => import('./pages/Batches'));
+const Inventory = lazy(() => import('./pages/Inventory'));
+const Locations = lazy(() => import('./pages/Locations'));
+const StockMovements = lazy(() => import('./pages/StockMovements'));
+const Customers = lazy(() => import('./pages/Customers'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+const Users = lazy(() => import('./pages/Users'));
+const AuditLogs = lazy(() => import('./pages/AuditLogs'));
+const StaffAllocation = lazy(() => import('./pages/StaffAllocation'));
+const StockAudits = lazy(() => import('./pages/StockAudits'));
+
+const Signup = lazy(() => import('./pages/Signup'));
+
+import { PickerAlertProvider } from './context/PickerAlertContext';
 
 export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <BrowserRouter>
+        <PickerAlertProvider>
+          <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             
             <Route element={<PrivateRoute />}>
               <Route element={<Layout />}>
@@ -58,6 +65,7 @@ export default function App() {
             </Route>
           </Routes>
         </BrowserRouter>
+        </PickerAlertProvider>
       </ToastProvider>
     </AuthProvider>
   );

@@ -8,6 +8,8 @@ services:
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
+    secretFiles:
+      - name: aiven-ca.pem
     envVars:
       - key: NODE_ENV
         value: production
@@ -24,7 +26,7 @@ services:
       - key: DB_SSL
         value: "true"
       - key: DB_SSL_REJECT_UNAUTHORIZED
-        value: "false"
+        value: "true"
       - key: DB_SSL_CA_PATH
         value: /etc/secrets/aiven-ca.pem
       - key: JWT_EXPIRES_IN

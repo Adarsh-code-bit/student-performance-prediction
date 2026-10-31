@@ -15,6 +15,9 @@ import TopSellingChart from '../components/dashboard/TopSellingChart';
 import LowStockTable from '../components/dashboard/LowStockTable';
 import RecentOrdersTable from '../components/dashboard/RecentOrdersTable';
 
+import ExpiryAlertsTable from '../components/dashboard/ExpiryAlertsTable';
+import { PlusCircle, ShoppingBag } from 'lucide-react';
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -29,6 +32,9 @@ export default function Dashboard() {
   const effectiveSubrole = (user?.role === 'STAFF' && user?.active_assignment)
     ? user.active_assignment
     : user?.staff_subrole;
+
+  const canManageProducts = user?.role === 'ADMIN' || user?.role === 'STORE_MANAGER';
+  const canManagePurchases = user?.role === 'ADMIN' || user?.role === 'STORE_MANAGER';
 
   useEffect(() => {
     fetchRoleData();
@@ -72,28 +78,53 @@ export default function Dashboard() {
   return (
     <div>
       {/* Header */}
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {user?.role === 'ADMIN' && 'Admin Command Center'}
-            {user?.role === 'STORE_MANAGER' && 'Store Manager Hub'}
-            {user?.role === 'STAFF' && effectiveSubrole === 'PICKER' && 'Picker Fulfillment Station'}
-            {user?.role === 'STAFF' && effectiveSubrole === 'PACKER' && 'Packer Dispatch Station'}
-            {user?.role === 'STAFF' && effectiveSubrole === 'AUDITOR' && 'Stock Auditor Dashboard'}
-            {user?.role === 'STAFF' && effectiveSubrole === 'INVENTORY_CLERK' && 'Inventory Clerk Hub'}
-            {!user && 'Dashboard'}
-          </h1>
-          <p>
-            {user?.role === 'ADMIN' && 'System-wide inventory control, role governance, and store analytics'}
-            {user?.role === 'STORE_MANAGER' && `Dark Store Management • Store ID #${user?.store_id || 1}`}
-            {user?.role === 'STAFF' && `Operational Terminal • Assigned Store #${user?.store_id || 1}`}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: '#17211B' }}>
+              Dashboard
+            </h1>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              padding: '2px 8px',
+              borderRadius: '9999px',
+              backgroundColor: '#12372A',
+              color: '#F8CB46',
+              letterSpacing: '0.04em'
+            }}>
+              {user?.role === 'ADMIN' && 'ADMIN COMMAND'}
+              {user?.role === 'STORE_MANAGER' && `DARK STORE #${user?.store_id || 1}`}
+              {user?.role === 'STAFF' && `${effectiveSubrole || 'STAFF'} TERMINAL`}
+            </span>
+          </div>
+          <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#68736B' }}>
+            Your warehouse operations, at a glance.
           </p>
         </div>
 
-        <button className="btn btn-secondary btn-sm" onClick={fetchRoleData} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <RefreshCw size={14} className={loading ? 'spin' : ''} />
-          Refresh
-        </button>
+        {/* Quick Actions Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          {canManageProducts && (
+            <Link to="/products" className="btn btn-primary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <PlusCircle size={14} /> Add Product
+            </Link>
+          )}
+          <Link to="/inventory" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <Layers size={14} /> View Inventory
+          </Link>
+          {canManagePurchases && (
+            <Link to="/purchases" className="btn btn-brand btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <ShoppingBag size={14} /> Create Purchase
+            </Link>
+          )}
+          <Link to="/orders" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <ClipboardList size={14} /> View Orders
+          </Link>
+          <button className="btn btn-secondary btn-sm" onClick={fetchRoleData} disabled={loading} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }} title="Refresh live data">
+            <RefreshCw size={14} className={loading ? 'spin' : ''} />
+          </button>
+        </div>
       </div>
 
       {/* Temporary Reassignment Banner */}
@@ -455,11 +486,12 @@ export default function Dashboard() {
           </div>
 
           <div className="dashboard-grid">
-            <TopSellingChart />
             <LowStockTable />
+            <ExpiryAlertsTable />
           </div>
 
           <div className="dashboard-grid">
+            <TopSellingChart />
             <div className="dashboard-grid-full">
               <RecentOrdersTable />
             </div>
@@ -467,10 +499,11 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* Staff View: Low Stock Table for easy warehouse navigation */}
+      {/* Staff View: Low Stock & Expiry Tables for easy warehouse navigation */}
       {user?.role === 'STAFF' && (
-        <div style={{ marginTop: '24px' }}>
+        <div className="dashboard-grid" style={{ marginTop: '24px' }}>
           <LowStockTable />
+          <ExpiryAlertsTable />
         </div>
       )}
     </div>

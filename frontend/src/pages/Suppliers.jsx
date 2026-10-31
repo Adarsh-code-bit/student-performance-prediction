@@ -145,80 +145,159 @@ const Suppliers = () => {
   };
 
   return (
-    <div>
-      <div className="page-header">
-        <h1>Suppliers</h1>
-        <p>Manage product suppliers</p>
-      </div>
-      
-      <div className="page-actions">
-        <div className="page-actions-left">
-          <div className="filter-search">
-            <Search size={16} />
-            <input 
-              placeholder="Search suppliers..." 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    <div className="page-container">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h1 className="page-title" style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: '#17211B' }}>
+              Suppliers & Vendor Governance
+            </h1>
+            <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '9999px', backgroundColor: '#e8f5e9', color: '#168A45', border: '1px solid #bbf7d0' }}>
+              {suppliers.length} Certified Vendors
+            </span>
           </div>
+          <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#68736B' }}>
+            Manage inbound procurement partners, contact points, and dark-store supply agreements.
+          </p>
         </div>
-        <div className="page-actions-right">
-          <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+        
+        <div>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => handleOpenModal()}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
             <Plus size={16} /> Add Supplier
           </button>
         </div>
       </div>
       
-      <div className="content-card">
+      {/* Search Bar */}
+      <div style={{
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5E9E4',
+        borderRadius: '10px',
+        padding: '12px 16px',
+        marginBottom: '20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        <div style={{ position: 'relative', width: '320px' }}>
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#68736B' }} />
+          <input 
+            type="text"
+            placeholder="Search suppliers by name or contact..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="form-input"
+            style={{ paddingLeft: '36px', height: '36px', fontSize: '13px' }}
+          />
+        </div>
+
+        <div style={{ fontSize: '12px', color: '#68736B' }}>
+          Showing <strong>{filteredSuppliers.length}</strong> supplier partners
+        </div>
+      </div>
+      
+      <div className="content-card" style={{ padding: 0, overflow: 'hidden' }}>
         {loading ? (
-          <div className="loading-state">Loading suppliers...</div>
+          <div className="empty-state" style={{ padding: '60px 0', textAlign: 'center' }}>
+            <div className="loading-spinner"></div>
+            <p style={{ marginTop: '12px', color: '#68736B', fontSize: '13px' }}>Loading vendor partners...</p>
+          </div>
         ) : error ? (
-          <div className="error-state">{error}</div>
+          <div className="error-state" style={{ padding: '40px 20px', textAlign: 'center', color: '#DC3545' }}>{error}</div>
         ) : filteredSuppliers.length === 0 ? (
-          <div className="empty-state">No suppliers found.</div>
+          <div className="empty-state" style={{ padding: '60px 20px', textAlign: 'center' }}>
+            <Truck size={40} style={{ color: '#68736B', margin: '0 auto 12px' }} />
+            <h3 style={{ margin: '0 0 6px', fontSize: '16px', fontWeight: 700, color: '#17211B' }}>No suppliers found</h3>
+            <p style={{ margin: 0, fontSize: '13px', color: '#68736B' }}>Add a new vendor partner to start issuing purchase orders.</p>
+          </div>
         ) : (
           <div className="table-responsive">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Supplier</th>
+                  <th>Vendor Partner</th>
                   <th>Contact Person</th>
-                  <th>Phone</th>
-                  <th>Email</th>
-                  <th>City</th>
-                  <th>Purchases</th>
-                  <th>Actions</th>
+                  <th>Phone & Email</th>
+                  <th>Location City</th>
+                  <th>Fulfilled Orders</th>
+                  <th>Status</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredSuppliers.map(supplier => (
                   <tr key={supplier.supplier_id}>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Truck size={16} style={{ color: '#9ca3af' }} />
-                        {supplier.supplier_name}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '6px', backgroundColor: '#e8f5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#168A45', border: '1px solid #c8e6c9' }}>
+                          <Truck size={16} />
+                        </div>
+                        <div>
+                          <strong style={{ fontSize: '13px', color: '#17211B' }}>{supplier.supplier_name}</strong>
+                          {supplier.address && (
+                            <div style={{ fontSize: '11px', color: '#68736B', maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {supplier.address}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
-                    <td>{supplier.contact_person || '-'}</td>
-                    <td>{supplier.phone || '-'}</td>
-                    <td>{supplier.email || '-'}</td>
-                    <td>{supplier.city || '-'}</td>
-                    <td>{supplier.purchase_count || 0}</td>
                     <td>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '13px', color: '#17211B', fontWeight: 600 }}>
+                        {supplier.contact_person || 'N/A'}
+                      </span>
+                    </td>
+                    <td>
+                      <div>
+                        {supplier.phone && (
+                          <div style={{ fontSize: '12px', color: '#17211B', fontFamily: 'monospace' }}>
+                            {supplier.phone}
+                          </div>
+                        )}
+                        {supplier.email && (
+                          <div style={{ fontSize: '11px', color: '#68736B' }}>
+                            {supplier.email}
+                          </div>
+                        )}
+                        {!supplier.phone && !supplier.email && <span style={{ color: '#9ca3af', fontSize: '11px' }}>No contact</span>}
+                      </div>
+                    </td>
+                    <td>
+                      <span style={{ fontSize: '12px', color: '#17211B' }}>
+                        {supplier.city || 'Standard Hub'}
+                      </span>
+                    </td>
+                    <td>
+                      <span style={{ fontWeight: 700, color: '#12372A', fontSize: '12px' }}>
+                        {supplier.purchase_count || 0} POs
+                      </span>
+                    </td>
+                    <td>
+                      <span className="status-badge status-success">Active Partner</span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
                         <button 
                           className="btn-icon" 
                           onClick={() => handleOpenModal(supplier)}
-                          title="Edit"
+                          title="Edit Supplier Details"
+                          style={{ width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                          <Pencil size={16} />
+                          <Pencil size={14} />
                         </button>
                         <button 
-                          className="btn-icon" 
+                          className="btn-icon danger" 
                           onClick={() => setDeleteTarget(supplier)}
-                          title="Delete"
+                          title="Delete Supplier"
+                          style={{ width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>

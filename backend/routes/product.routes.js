@@ -5,12 +5,17 @@ const { verifyToken, isAdmin, isManagerOrAdmin } = require('../middleware/auth.m
 
 router.use(verifyToken);
 
+// Barcode detection & product lookup routes (accessible to all authenticated staff & pickers)
+router.get('/barcode/:barcode', productController.lookupByBarcode);
+router.post('/confirm-external', productController.confirmExternalProduct);
+
 // External API Integration Routes (Admin only)
 router.get('/external/search', isAdmin, productController.searchExternal);
 router.get('/external/barcode/:barcode', isAdmin, productController.getExternalByBarcode);
 router.post('/import', isAdmin, productController.importProduct);
 router.post('/import/bulk', isAdmin, productController.bulkImportProducts);
 router.post('/:id/generate-inventory', isManagerOrAdmin, productController.generateDemoInventory);
+router.post('/:id/receive-stock', isManagerOrAdmin, productController.receiveInitialStock);
 
 // Standard CRUD Routes
 router.get('/', productController.getAll);

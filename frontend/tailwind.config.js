@@ -11,23 +11,34 @@ export default {
   },
   theme: {
     extend: {
-      // Extend Tailwind's color palette with the project's primary indigo shades
+      // Quick-Commerce Design Tokens
       colors: {
-        primary: {
-          50:  '#EEF2FF',
-          100: '#E0E7FF',
-          200: '#C7D2FE',
-          300: '#A5B4FC',
-          400: '#818CF8',
-          500: '#6366F1',
-          600: '#4F46E5',
-          700: '#4338CA',
-          800: '#3730A3',
-          900: '#312E81',
+        brand: {
+          yellow: '#F8CB46',
+          'yellow-light': '#FDF3D0',
+          'yellow-dark': '#D4A418',
+          green: '#168A45',
+          'green-light': '#E8F5ED',
+          'green-dark': '#0F6531',
+          forest: '#12372A',
+          'forest-light': '#1A4D3B',
+          'forest-dark': '#0B231B',
         },
+        workspace: '#F7F8F5',
+        card: '#FFFFFF',
+        'text-main': '#17211B',
+        'text-muted': '#68736B',
+        'border-ui': '#E5E9E4',
+        // Semantic aliases
+        success: '#168A45',
+        'success-bg': '#E8F5ED',
+        warning: '#E9A23B',
+        'warning-bg': '#FEF6EB',
+        critical: '#DC3545',
+        'critical-bg': '#FDF2F2',
       },
       fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       borderRadius: {
         sm: '6px',

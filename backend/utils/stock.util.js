@@ -7,7 +7,10 @@ function planBatchDeductions(rows, requestedQuantity) {
   for (const row of eligible) {
     if (!remaining) break;
     const quantity = Math.min(remaining, Number(row.quantity));
-    deductions.push({ inventory_id: row.inventory_id, quantity });
+    const item = { inventory_id: row.inventory_id, quantity };
+    if (row.batch_id !== undefined) item.batch_id = row.batch_id;
+    if (row.location_id !== undefined) item.location_id = row.location_id;
+    deductions.push(item);
     remaining -= quantity;
   }
   if (remaining) throw new Error('Insufficient eligible stock.');

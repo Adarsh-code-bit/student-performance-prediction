@@ -9,6 +9,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const { addToast } = useToast();
 
   const fetchProduct = async () => {
@@ -76,10 +77,18 @@ const ProductDetails = () => {
             </div>
             <div className="p-6 flex flex-col md:flex-row gap-8">
               <div className="w-48 h-48 bg-gray-50 border rounded-lg flex-shrink-0 flex items-center justify-center p-2">
-                {product.image_url ? (
-                  <img src={product.image_url} alt={product.product_name} className="w-full h-full object-contain mix-blend-multiply" />
+                {product.image_url && !imgError ? (
+                  <img 
+                    src={product.image_url} 
+                    alt={product.product_name} 
+                    className="w-full h-full object-contain"
+                    onError={() => setImgError(true)} 
+                  />
                 ) : (
-                  <Package size={48} className="text-gray-300" />
+                  <div className="flex flex-col items-center justify-center gap-1.5 text-center text-gray-400">
+                    <Package size={44} className="text-gray-300" />
+                    <span className="text-xs font-medium text-gray-500">Image unavailable</span>
+                  </div>
                 )}
               </div>
               <div className="flex-1 grid grid-cols-2 gap-y-6 gap-x-4">

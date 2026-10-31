@@ -16,10 +16,10 @@ exports.getAll = async (req, res) => {
   try {
     let sql = `
       SELECT i.*, 
-        p.product_name, p.sku, p.reorder_level, p.category_id,
+        p.product_name, p.sku, p.barcode, p.reorder_level, p.category_id, p.image_url,
         c.category_name,
         b.batch_code, b.expiry_date, 
-        l.location_name, l.location_type,
+        l.location_name, l.location_type, l.rack_number, l.shelf, l.bin,
         (SELECT COALESCE(SUM(quantity), 0) FROM order_details od WHERE od.product_id = i.product_id) AS sales
       FROM inventory i
       JOIN product p ON i.product_id = p.product_id
@@ -53,6 +53,7 @@ exports.getAll = async (req, res) => {
     
     const data = rows.map(row => ({
       ...row,
+      complete_location_code: (row.rack_number && row.shelf && row.bin) ? `${row.rack_number}-${row.shelf}-${row.bin}` : (row.location_name || 'N/A'),
       status: calculateBatchStatus(row.expiry_date)
     }));
 
@@ -70,10 +71,10 @@ exports.getOne = async (req, res) => {
 
     let sql = `
       SELECT i.*, 
-        p.product_name, p.sku, p.reorder_level, p.category_id,
+        p.product_name, p.sku, p.barcode, p.reorder_level, p.category_id, p.image_url,
         c.category_name,
         b.batch_code, b.expiry_date, 
-        l.location_name, l.location_type,
+        l.location_name, l.location_type, l.rack_number, l.shelf, l.bin,
         (SELECT COALESCE(SUM(quantity), 0) FROM order_details od WHERE od.product_id = i.product_id) AS sales
       FROM inventory i
       JOIN product p ON i.product_id = p.product_id
@@ -96,6 +97,7 @@ exports.getOne = async (req, res) => {
     }
 
     const inventory = rows[0];
+    inventory.complete_location_code = (inventory.rack_number && inventory.shelf && inventory.bin) ? `${inventory.rack_number}-${inventory.shelf}-${inventory.bin}` : (inventory.location_name || 'N/A');
     inventory.status = calculateBatchStatus(inventory.expiry_date);
 
     res.json({ success: true, data: inventory });

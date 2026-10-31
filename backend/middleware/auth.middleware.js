@@ -23,6 +23,15 @@ const verifyToken = async (req, res, next) => {
     }
 
     try {
+      // Enforce account approval check
+      if (decoded.approval_status && decoded.approval_status !== 'APPROVED') {
+        return res.status(403).json({
+          success: false,
+          code: 'ACCOUNT_NOT_APPROVED',
+          message: 'Access denied. Operator account is not approved for warehouse operations.'
+        });
+      }
+
       req.user = decoded;
 
       // Check if user has an active temporary operational assignment

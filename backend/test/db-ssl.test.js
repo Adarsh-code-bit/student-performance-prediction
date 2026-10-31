@@ -107,3 +107,30 @@ test('db config: honors explicit DB_SSL_REJECT_UNAUTHORIZED=false when requested
   assert.ok(config.ssl);
   assert.equal(config.ssl.rejectUnauthorized, false);
 });
+
+test('db config: throws informative error if CA certificate path does not exist', () => {
+  assert.throws(
+    () => {
+      buildPoolConfig({
+        DB_SSL: 'true',
+        DB_SSL_CA_PATH: '/nonexistent/path/to/ca.pem',
+      });
+    },
+    {
+      message: /CA certificate file not found at path: \/nonexistent\/path\/to\/ca\.pem/,
+    }
+  );
+});
+
+test('db config: parses Railway DATABASE_URL / MYSQL_URL connection string', () => {
+  const config = buildPoolConfig({
+    DATABASE_URL: 'mysql://railway_user:p%40ssword123@junction.proxy.rlwy.net:12345/railway_db',
+  });
+  assert.equal(config.host, 'junction.proxy.rlwy.net');
+  assert.equal(config.port, 12345);
+  assert.equal(config.user, 'railway_user');
+  assert.equal(config.password, 'p@ssword123');
+  assert.equal(config.database, 'railway_db');
+});
+
+

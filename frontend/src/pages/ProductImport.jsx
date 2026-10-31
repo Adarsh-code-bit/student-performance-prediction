@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Search, Download, CheckCircle, AlertCircle, Loader, Barcode, Database } from 'lucide-react';
+import { Search, Download, CheckCircle, AlertCircle, Loader, Barcode, Database, Camera } from 'lucide-react';
 import api from '../services/api';
+import CameraBarcodeScannerModal from '../components/shared/CameraBarcodeScannerModal';
 
 const ProductImport = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,10 +11,38 @@ const ProductImport = () => {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [error, setError] = useState('');
   const [importStatus, setImportStatus] = useState(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+  const performBarcodeLookup = async (code) => {
+    if (!code) return;
+    setLoading(true);
+    setError('');
+    setResults([]);
+    setImportStatus(null);
+    setSearchType('barcode');
+    setSearchTerm(code);
+
+    try {
+      const res = await api.get(`/products/external/barcode/${code}`);
+      if (res.data?.success && res.data?.data) {
+        setResults([res.data.data]);
+      } else {
+        setError(`Product with barcode "${code}" was not found in Open Food Facts database.`);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || `Barcode "${code}" not found in external catalog. You can create it manually.`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!searchTerm.trim()) return;
+
+    if (searchType === 'barcode') {
+      return performBarcodeLookup(searchTerm.trim());
+    }
 
     setLoading(true);
     setError('');
@@ -21,19 +50,19 @@ const ProductImport = () => {
     setImportStatus(null);
 
     try {
-      const endpoint = searchType === 'barcode' 
-        ? `/products/external/barcode/${searchTerm}`
-        : `/products/external/search?q=${searchTerm}`;
-      
-      const res = await api.get(endpoint);
+      const res = await api.get(`/products/external/search?q=${searchTerm}`);
       if (res.data.success) {
-        setResults(searchType === 'barcode' ? [res.data.data] : res.data.data);
+        setResults(res.data.data || []);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch products from external API');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCameraScan = (code) => {
+    performBarcodeLookup(code);
   };
 
   const handleImport = async (product) => {
@@ -131,8 +160,17 @@ const ProductImport = () => {
               </div>
             </div>
           </div>
-          <button type="submit" disabled={loading} className="btn btn-primary min-w-[120px] flex justify-center">
+          <button type="submit" disabled={loading} className="btn btn-primary min-w-[110px] flex justify-center">
             {loading ? <Loader className="animate-spin" size={20} /> : 'Search'}
+          </button>
+          <button 
+            type="button" 
+            onClick={() => setIsCameraOpen(true)}
+            className="btn btn-secondary flex items-center gap-1.5 whitespace-nowrap"
+            title="Scan physical product barcode with camera"
+          >
+            <Camera size={18} />
+            <span>Scan with Camera</span>
           </button>
           {searchType === 'name' && (
             <button 
@@ -146,6 +184,13 @@ const ProductImport = () => {
           )}
         </form>
       </div>
+
+      <CameraBarcodeScannerModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onScan={handleCameraScan}
+        title="Scan Product Barcode (Open Food Facts)"
+      />
 
       {results.length > 0 && (
         <div className="card p-0 overflow-hidden">

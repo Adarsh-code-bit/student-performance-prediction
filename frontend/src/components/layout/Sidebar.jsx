@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, Grid3X3, Truck, ShoppingCart, Layers,
   Warehouse, MapPin, ArrowLeftRight, Users, ClipboardList,
   BarChart3, FileText, UserCog, Boxes, Database, LogOut,
-  UserCheck, ClipboardCheck
+  UserCheck, ClipboardCheck, Zap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -85,41 +85,48 @@ export default function Sidebar({ isOpen, onClose }) {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <Boxes size={20} color="#fff" />
+            <Zap size={22} fill="#12372A" color="#12372A" />
           </div>
           <div>
-            <div className="sidebar-title">SmartInventory</div>
-            <div className="sidebar-subtitle">Quick Commerce</div>
+            <div className="sidebar-title flex items-center gap-1.5">
+              <span>QUICKSTOCK</span>
+              <span style={{ fontSize: '10px', background: '#F8CB46', color: '#12372A', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>WMS</span>
+            </div>
+            <div className="sidebar-subtitle">Smart Inventory</div>
           </div>
         </div>
 
         {user && (
           <div style={{
-            padding: '12px 18px',
+            padding: '14px 18px',
             borderBottom: '1px solid rgba(255,255,255,0.08)',
-            background: 'rgba(255,255,255,0.02)'
+            background: 'rgba(0,0,0,0.18)'
           }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {user.user_name}
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8', display: 'flex', gap: '6px', marginTop: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ fontSize: '11px', color: '#CBD2CA', display: 'flex', gap: '6px', marginTop: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{
-                background: user.role === 'ADMIN' ? '#4f46e5' : user.role === 'STORE_MANAGER' ? '#0284c7' : '#475569',
+                background: user.role === 'ADMIN' ? '#168A45' : user.role === 'STORE_MANAGER' ? '#0E5B2E' : '#2A4A3C',
                 color: '#fff',
                 fontSize: '10px',
-                padding: '1px 6px',
+                padding: '2px 7px',
                 borderRadius: '4px',
-                fontWeight: 600
+                fontWeight: 700,
+                letterSpacing: '0.4px',
+                border: '1px solid rgba(255,255,255,0.12)'
               }}>
                 {user.role}
               </span>
               {user.staff_subrole && (
                 <span style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  color: '#cbd5e1',
+                  background: 'rgba(248, 203, 70, 0.15)',
+                  color: '#F8CB46',
                   fontSize: '10px',
-                  padding: '1px 6px',
-                  borderRadius: '4px'
+                  padding: '2px 7px',
+                  borderRadius: '4px',
+                  fontWeight: 700,
+                  border: '1px solid rgba(248, 203, 70, 0.3)'
                 }}>
                   {user.staff_subrole}
                 </span>
@@ -127,18 +134,19 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
             {user.active_assignment && (
               <div style={{
-                marginTop: '6px',
-                fontSize: '10px',
-                background: 'rgba(249, 115, 22, 0.15)',
-                color: '#fdba74',
-                padding: '3px 6px',
-                borderRadius: '4px',
-                border: '1px solid rgba(249, 115, 22, 0.3)',
+                marginTop: '8px',
+                fontSize: '11px',
+                background: 'rgba(233, 162, 59, 0.18)',
+                color: '#F8CB46',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                border: '1px solid rgba(248, 203, 70, 0.35)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '5px'
               }}>
-                <span>⚡ Reassigned:</span>
+                <Zap size={12} fill="#F8CB46" />
+                <span>Surge Duty:</span>
                 <strong>{user.active_assignment}</strong>
               </div>
             )}
@@ -179,19 +187,22 @@ export default function Sidebar({ isOpen, onClose }) {
             className="sidebar-link"
             style={{ 
               width: '100%', 
-              background: 'transparent', 
-              border: 'none', 
+              background: 'rgba(220, 53, 69, 0.12)', 
+              border: '1px solid rgba(220, 53, 69, 0.25)', 
               cursor: 'pointer', 
               textAlign: 'left',
               marginBottom: '10px',
-              color: '#fda4af'
+              color: '#FCA5A5',
+              fontWeight: 600
             }}
             onClick={handleLogout}
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             <span>Sign Out</span>
           </button>
-          <div>Smart Inventory v1.0 © 2026</div>
+          <div style={{ fontSize: '11px', color: '#9AA39D', letterSpacing: '0.3px' }}>
+            QUICKSTOCK Operations • v2.0
+          </div>
         </div>
       </aside>
     </>
