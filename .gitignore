@@ -1,3 +1,9 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.joblib.bak
+
 # Dependencies
 node_modules/
 */node_modules/

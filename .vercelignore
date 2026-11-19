@@ -1,0 +1,12 @@
+# Exclude non-app folders from Vercel Serverless bundle
+backend/
+frontend/
+database/
+docs/
+app_streamlit_backup.py
+train_model.py
+viva_questions.md
+__pycache__/
+*.pyc
+.git
+

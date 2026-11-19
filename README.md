@@ -1,122 +1,161 @@
-# Smart Inventory Management System for Quick Commerce
+# 🎯 THE DROP — Student Academic Intelligence & Faculty Terminal
 
-## Project Introduction
-The Smart Inventory Management System is an enterprise-grade web application built to handle the complex logistical requirements of modern Quick Commerce. It provides a real-time, single-pane-of-glass dashboard for tracking products, managing suppliers, orchestrating purchases, monitoring batch lifecycles, and fulfilling customer orders. 
+An industrial-grade, white-box Machine Learning decision support terminal engineered for college faculty, academic mentors, and department heads. Built on a deterministic `DecisionTreeClassifier` (Gini Impurity, Depth 4) to monitor student trajectories, prevent academic drop-out, and explain classification logic transparently.
 
-## Features
-- **Strict Role-Based Access Control (RBAC):** Secure JWT authentication isolating Admin, Manager, and Staff functionalities.
-- **Transactional Consistency:** Deep MySQL ACID compliance preventing negative stock levels.
-- **Intelligent Analytics:** Live SQL aggregations automatically identifying Low Stock, Reorder metrics, and Expiry lifecycles.
-- **Stock Movement Engine:** Granular tracking of physical product migrations across distinct warehouse locations.
-- **Global Audit System:** Intercepts and records every structural database mutation into a unified Audit Log.
+---
 
-## Technology Stack
-- **Frontend:** React.js 18, Vite, React Router, Recharts, Lucide Icons, Axios.
-- **Backend:** Node.js (v18+), Express.js, JSON Web Tokens, bcryptjs.
-- **Database:** MySQL 8+ (relational structure with strictly defined Foreign Keys and CHECK constraints).
+## 📌 Application Architecture: 4 Unified Views
 
-## Folder Structure
+1. **◈ OVERVIEW (`#dashboard`):**
+   - 4 Real-time KPI Metric cards (`200 Total Cohort`, `93 On Track`, `69 Needs Attention`, `38 At Risk`).
+   - Visual Performance Distribution split-bar with segment proportions.
+   - **Needs Your Attention First** urgency watchlist (students in At Risk sorted by CGPA and attendance severity with 1-click inspection).
+   - **Explainability Architecture Guide** separating ML cognitive classification from administrative statutory rules.
+
+2. **✈ DEPARTURES (`#records`):**
+   - Airport terminal departures flight board with Gate pills (`Gate A`, `Gate B`, `Gate C`).
+   - Dynamic category filter pills (`ALL 200`, `ON TRACK 93`, `NEEDS ATTENTION 69`, `AT RISK 38`).
+   - Real-time search by Student ID.
+   - Sample Mode switch: Toggle between the 12 representative demo students and the full 200-student cohort.
+   - Interactive table with sticky headers, `LOW` attendance warnings, status badges, and 1-click check-in.
+
+3. **🎫 CHECK-IN DESK (`#predictor`):**
+   - Real-time inference sliders (Previous CGPA, Internal Marks /40, Attendance %, Assignment Marks /10).
+   - "Reset to Class Average" and tactile "Print Boarding Pass" button.
+   - Authentic physical Boarding Pass ticket with status split-flap tiles, decision rule trail, stamped exam eligibility badge, barcode, and Gate badge.
+
+4. **⚙ THE MACHINE (`#model`):**
+   - Interactive SVG Decision Tree canvas with animated marble physics dropping along the exact decision path.
+   - "Drop Student" and "Drop All 200 Cohort" simulation buttons.
+   - Step-by-step logic breakdown ("The Questions It Asks").
+   - Verified Accuracy tiles: **97.5% Training Accuracy** (160 samples), **92.5% Testing Accuracy** (40 samples).
+   - Feature Importance progress meters (CGPA 87.9%, Internal Marks 11.4%, Assignment 0.6%, Attendance 0.0%).
+   - Institutional Audit & Viva Defense FAQ explaining why attendance is kept separate from capability classification.
+
+---
+
+## 🏗️ Technology Stack
+
+| Component | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Language** | Python 3.10+ / 3.14 | Core programming language |
+| **Web Server** | Flask & Gunicorn | Production WSGI backend & REST APIs |
+| **Frontend** | Vanilla ES6+ & SVG | Zero-dependency high-performance reactive UI |
+| **Machine Learning** | Scikit-learn | White-box `DecisionTreeClassifier` (Gini, Depth 4) |
+| **Data Handling** | Pandas & NumPy | Deterministic 200-student cohort data pipeline |
+| **Model Persistence**| Joblib | Serialization of trained decision tree model |
+
+---
+
+## 🚀 Run Command
+
+```powershell
+python app.py
+```
+Open **http://localhost:5001** (or port displayed in the console) in your browser.
+| **Model Persistence**| Joblib | Fast binary model serialization and reloading |
+| **Web Interface** | Streamlit | Reactive interactive faculty dashboard |
+
+---
+
+## 📊 Academic Features & Target Categories
+
+### 1. Input Features
+1. **Attendance Percentage (`0.0 - 100.0%`):** Regularity in lectures and practical sessions. College eligibility norm is typically 75%.
+2. **Internal Examination Marks (`0.0 - 40.0`):** Midterm theoretical assessment score (out of 40).
+3. **Assignment Marks (`0.0 - 10.0`):** Continuous homework and mini-project assessment (out of 10).
+4. **Previous Semester CGPA (`0.0 - 10.0`):** Historical Cumulative Grade Point Average.
+
+### 2. Prediction Categories
+- 🟢 **On Track:** Consistent performance across all academic indicators. Recommended for advanced projects and peer mentoring.
+- 🟡 **Needs Attention:** Borderline performance or dipping attendance. Recommended for academic counseling and targeted tutorials.
+- 🔴 **At Risk:** Critically low attendance (<60%) or failing examination marks. Recommended for immediate remedial intervention and parental notification.
+
+---
+
+## 📁 Project Directory Structure
+
 ```text
-smart-inventory/
-├── backend/
-│   ├── config/          # DB connections
-│   ├── controllers/     # Business logic & SQL queries
-│   ├── middleware/      # JWT authentication interceptors
-│   ├── routes/          # Express route definitions
-│   ├── .env             # Environment variables
-│   └── server.js        # Main application entry point
-├── database/
-│   ├── schema.sql       # Complete database definition
-│   └── seed-users.sql   # Demo user injector
-├── docs/
-│   └── project_report.md# Full university-level documentation
-└── frontend/
-    ├── src/
-    │   ├── components/  # Reusable UI elements (Sidebar, StatCards)
-    │   ├── context/     # Auth Context & Toast Context
-    │   ├── pages/       # Core module views (Products, Analytics, etc.)
-    │   ├── services/    # Axios API interceptor configurations
-    │   ├── App.jsx      # React Router DOM tree
-    │   └── index.css    # Global custom styling
-    └── index.html
+student_performance_prediction_app/
+│
+├── app.py                 # Streamlit web application with Dashboard, Predictor & Analytics
+├── train_model.py         # Script to generate synthetic data, train Decision Tree & save model.pkl
+├── student_data.csv       # Sample synthetic dataset containing 200 student records
+├── model.pkl              # Serialized Decision Tree model bundle (saved by train_model.py)
+├── requirements.txt       # List of required Python packages
+├── viva_questions.md      # 15 detailed viva questions and answers for academic defense
+└── README.md              # Complete project documentation and execution guide
 ```
 
-## MySQL Setup
-The application requires a running MySQL 8 instance. You do **not** need to manually copy/paste SQL schemas. A setup script has been provided to build the environment automatically.
+### Purpose of Every Project File:
+1. **`train_model.py`:** Generates the sample synthetic dataset (`student_data.csv`), trains a `DecisionTreeClassifier` with `max_depth=4`, calculates evaluation metrics (Accuracy, Confusion Matrix, Classification Report), and serializes the trained model bundle to `model.pkl`.
+2. **`student_data.csv`:** Stores the 200 synthetic student academic profiles used to train and test the model.
+3. **`model.pkl`:** The trained machine learning model bundle saved using `joblib`. It contains the trained classifier, feature names, and test metrics.
+4. **`app.py`:** The Streamlit web application. It loads `model.pkl` and `student_data.csv` to render the Home Dashboard, Interactive Prediction Form, and Matplotlib Analytics charts.
+5. **`requirements.txt`:** Specifies all Python library dependencies for simple one-command installation.
+6. **`viva_questions.md`:** Comprehensive preparation guide featuring 15 standard viva questions with simple, accurate answers covering ML concepts, Decision Trees, and data ethics.
+7. **`README.md`:** Primary architectural guide and instructions manual.
 
-### Environment Variables
-Inside the `backend/` folder, configure your `.env` file to match your local MySQL credentials:
+---
 
-```env
-PORT=5000
-CLIENT_URL=http://localhost:5173
+## ⚙️ Step-by-Step Installation & Execution Guide
 
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_NAME=smart_inventory
+Follow these commands in your command prompt, PowerShell, or terminal:
 
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=24h
+### Step 1: Open Terminal in the Project Directory
+```bash
+cd student_performance_prediction_app
 ```
 
-## Installation & Setup
+### Step 2: Install Required Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-1. **Clone the repository and install dependencies:**
-   ```bash
-   cd backend && npm install
-   cd ../frontend && npm install
-   ```
+### Step 3: Train the Machine Learning Model
+Run the training script to generate the synthetic dataset, train the Decision Tree, evaluate metrics, and save `model.pkl`:
+```bash
+python train_model.py
+```
+*Expected Output:*
+- Generates `student_data.csv` with 200 records.
+- Splits data: 160 Training samples, 40 Testing samples.
+- Displays Training Accuracy (~97.5%) and Testing Accuracy (~92.5%).
+- Displays Confusion Matrix and Classification Report.
+- Saves `model.pkl`.
 
-2. **Database Setup:**
-   Ensure your MySQL server is running, then execute the automated setup script to generate the database, schemas, and demo accounts:
-   ```bash
-   cd backend
-   node setup-db.js
-   ```
+### Step 4: Launch the Streamlit Web Application
+```bash
+python -m streamlit run app.py
+```
+The application will launch automatically in your default browser at:
+`http://localhost:8501`
 
-3. **Running the Backend:**
-   ```bash
-   cd backend
-   npm run dev
-   ```
-   *(Runs on http://localhost:5000)*
+---
 
-4. **Running the Frontend:**
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-   *(Runs on http://localhost:5173)*
+## 🧠 Machine Learning Workflow (in Simple English)
 
-## Demo Login
-The `setup-db.js` script automatically generates the following demo accounts:
-- **Email:** `admin@example.com` | **Password:** `password123`
-- **Email:** `manager@example.com` | **Password:** `password123`
-- **Email:** `staff@example.com` | **Password:** `password123`
+1. **Step 1: Data Generation & Ingestion (`student_data.csv`)**  
+   We create 200 student academic records with 4 measurable features: attendance, internal marks, assignment marks, and previous CGPA. Each student is labeled based on a transparent composite academic scoring rule.
 
-## Core API Endpoints
-- `POST /api/auth/login`: Authenticate and receive JWT.
-- `GET /api/dashboard/stats`: Retrieve aggregate KPIs.
-- `GET /api/analytics/low-stock`: Returns items breaching their defined reorder thresholds.
-- `GET /api/inventory`: Fetches distinct product/batch combinations mapped to physical locations.
-- `POST /api/purchases`: Conducts a massive multi-table transaction (Purchase → Purchase Details → Batches → Inventory).
-- `POST /api/orders`: Reduces stock, throwing an explicit error if `requested > available`.
+2. **Step 2: Train/Test Split**  
+   The 200 records are split into two groups: 80% (160 students) for **training** and 20% (40 students) for **testing**. Stratified sampling ensures that both sets have identical proportions of On Track, Needs Attention, and At Risk students.
 
-## Smart Features
-Instead of utilizing heavy external dependencies or Machine Learning, this application computes Smart Analytics natively using MySQL:
-- **Reorder Suggestion:** Computation utilizing `GREATEST((reorder_level * 2) - current_stock, 0)`.
-- **Near Expiry:** Filters batches where `expiry_date` rests inside a dynamic +30 day sliding window from `CURDATE()`.
-- **Fast Moving:** Ranks products based on pure gross movement inside `order_details` across dynamic 7, 30, and 90 day windows.
-- **Slow/Non-Selling:** Employs `LEFT JOIN` aggregations to locate items with precisely 0 sales movement within a requested period.
+3. **Step 3: Training the Decision Tree (`DecisionTreeClassifier`)**  
+   The algorithm learns logical if-else split rules (e.g., *Is attendance < 60%?*, *Is CGPA < 6.0?*). It uses the **Gini Impurity** metric to find the cleanest splits. To avoid memorization (overfitting), we set `max_depth=4`.
 
-## Deployment configuration
+4. **Step 4: Model Evaluation**  
+   The model is tested against the 40 unseen test students. We compute the exact **Accuracy**, **Confusion Matrix**, **Precision**, **Recall**, and **F1-Score**.
 
-Backend requires `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET` (32+ random characters), and `CLIENT_URL`. `FRONTEND_ORIGINS` may contain additional comma-separated trusted browser origins. Never put database credentials or JWT secrets in frontend `VITE_` variables.
+5. **Step 5: Model Persistence (`model.pkl`)**  
+   The trained decision tree is saved to disk using `joblib`. This allows the web app to load the ready-made model instantly without retraining from scratch every time.
 
-For cloud MySQL deployments (such as Aiven), enable verified TLS by setting `DB_SSL=true`, `DB_SSL_REJECT_UNAUTHORIZED=true`, and providing the provider's CA certificate via `DB_SSL_CA` (containing the PEM certificate string). When `DB_SSL` is omitted or `false`, unencrypted connections are preserved for local development.
+6. **Step 6: Live Inference & Visualization (`app.py`)**  
+   Professors interact with the model through an intuitive Streamlit interface, sliding values and receiving real-time predictions, probabilities, and advisory recommendations.
 
-Frontend reads `VITE_API_BASE_URL`; use `/api` behind a same-origin reverse proxy, or a public API URL for a separately hosted API. Local Vite development proxies `/api` to `http://localhost:5000`.
+---
 
-Before deployment, use a least-privilege database account, inspect the live schema read-only, back up and verify a restore to a separate database, and review a versioned migration. `backend/utils/run-migration.js` is metadata preflight only. Do not run historical setup or schema update SQL against an existing database. Order allocation uses earliest-expiry eligible batches, but inventory is not linked to stores in the source schema; store-specific stock allocation remains unsupported until that relationship is verified/designed.
+## ⚠️ Synthetic Data Transparency Disclaimer
+
+> **Important Note for Academic Examiners & Evaluators:**  
+> The dataset (`student_data.csv`) utilized in this application is **synthetically generated demonstration data** created specifically for educational and demonstration purposes. It does **not** reflect real student records from any collegiate institution, nor should it be used as clinical proof of real-world predictive validity. In real institutional deployments, real anonymized data compliant with student data privacy laws must be collected and validated longitudinally.

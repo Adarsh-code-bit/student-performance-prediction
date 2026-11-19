@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Pulse — Academic Monitoring & Performance Prediction System</title>
+  
+  <!-- Typography: Playfair Display (Serif Headings), Plus Jakarta Sans (Clean Modern UI), Space Mono (Code/Numbers) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/style.css?v=7.0">
+
+  <!-- Critical Layout & Theme Guarantee (Prevents FOUC & Unstyled Content) -->
+  <style>
+    :root {
+      --bg-page: #F4EDF7;
+      --bg-header: #3E1937;
+      --bg-card: #FFFFFF;
+      --color-plum-primary: #542447;
+      --color-plum-dark: #3E1937;
+      --color-plum-deep: #321B34;
+      --color-teal: #119B91;
+      --color-gold: #DDA52D;
+      --color-coral: #EF625C;
+      --color-text-primary: #321B34;
+      --color-text-secondary: #766779;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #F4EDF7 !important;
+      color: #321B34 !important;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .max-container { width: min(92%, 1440px); margin: 0 auto; }
+    .top-nav, .global-navbar {
+      background-color: #3E1937 !important;
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 14px rgba(50, 27, 52, 0.15);
+      width: 100%;
+    }
+    .top-nav-inner, .navbar-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    .brand-group, .navbar-brand { display: flex; align-items: center; gap: 10px; }
+    .brand-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-wordmark, .brand-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 21px; font-weight: 800; color: #FFFFFF !important; line-height: 1; letter-spacing: 0.8px;
+    }
+    .brand-divider { color: rgba(255, 255, 255, 0.28); font-size: 15px; margin: 0 4px; }
+    .brand-subtitle {
+      font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; color: #D1C4D4 !important; text-transform: uppercase;
+    }
+    .view-tabs, .navbar-menu { display: flex; align-items: center; gap: 6px; }
+    .view-tab, .nav-item {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      font-size: 14px; font-weight: 600; padding: 8px 18px; border-radius: 9999px;
+      display: inline-flex; align-items: center; gap: 8px; transition: all 0.18s ease; cursor: pointer;
+    }
+    .view-tab:hover, .nav-item:hover { background-color: rgba(255, 255, 255, 0.12); color: #FFFFFF !important; }
+    .view-tab.active, .nav-item.active {
+      background-color: #FFFFFF !important; color: #3E1937 !important; font-weight: 700; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    .profile-pill {
+      display: inline-flex; align-items: center; gap: 8px; color: #FFFFFF !important;
+      background: rgba(255, 255, 255, 0.1); padding: 6px 14px; border-radius: 9999px; font-size: 13.5px; font-weight: 600;
+    }
+    .main-wrapper, .page-container { flex: 1; padding-top: 28px; padding-bottom: 50px; width: 100%; }
+    .section-container, .view-panel { width: 100%; }
+    .kpi-grid, .kpi-cards-grid {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin-bottom: 24px; width: 100%;
+    }
+    .kpi-card {
+      background: #FFFFFF !important; border: 1px solid #E6DCE8; border-radius: 14px; padding: 22px 24px;
+      box-shadow: 0 2px 6px rgba(62, 25, 55, 0.04); display: flex; flex-direction: column;
+    }
+    .kpi-card-total { border-left: 4px solid #542447; }
+    .kpi-card-teal { border-top: 4px solid #119B91; }
+    .kpi-card-gold { border-top: 4px solid #DDA52D; }
+    .kpi-card-coral { border-top: 4px solid #EF625C; }
+    .grid-overview-2col, .dashboard-columns-grid {
+      display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(380px, 440px); gap: 24px; align-items: start; width: 100%;
+    }
+    .overview-left-stack, .dashboard-left-col, .overview-right-stack, .dashboard-right-col {
+      display: flex; flex-direction: column; gap: 24px; width: 100%;
+    }
+    .card {
+      background: #FFFFFF !important; border: 1px solid #E6DCE8; border-radius: 14px; padding: 24px 26px;
+      box-shadow: 0 2px 6px rgba(62, 25, 55, 0.04); position: relative;
+    }
+    @media (max-width: 1024px) {
+      .kpi-grid, .kpi-cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-overview-2col, .dashboard-columns-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .kpi-grid, .kpi-cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Navigation Header (Plum #3E1937 with gold accents) -->
+  <header class="top-nav global-navbar">
+    <div class="top-nav-inner navbar-inner max-container">
+      
+      <!-- Brand Group -->
+      <div class="brand-group navbar-brand">
+        <a href="#dashboard" class="brand-link" aria-label="Student Pulse Home">
+          <svg class="brand-book-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DDA52D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="8" y1="10" x2="14" y2="10"></line>
+          </svg>
+          <span class="brand-wordmark brand-name">STUDENT PULSE</span>
+        </a>
+        <span class="brand-divider" aria-hidden="true">|</span>
+        <span class="brand-subtitle">ACADEMIC MONITORING</span>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="view-tabs navbar-menu" role="tablist" aria-label="System navigation">
+        <a href="#dashboard" id="tab-dashboard" class="view-tab nav-item active" role="tab" aria-selected="true" aria-controls="view-dashboard">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#records" id="tab-records" class="view-tab nav-item" role="tab" aria-selected="false" aria-controls="view-records">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Students</span>
+        </a>
+
+        <a href="#predictor" id="tab-predictor" class="view-tab nav-item" role="tab" aria-selected="false" aria-controls="view-predictor">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Predictor</span>
+        </a>
+
+        <a href="#model" id="tab-model" class="view-tab nav-item" role="tab" aria-selected="false" aria-controls="view-model">
+          <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Model Info</span>
+        </a>
+      </nav>
+
+      <!-- Faculty Profile Badge -->
+      <div class="navbar-profile">
+        <span class="profile-pill" title="Signed in as Faculty Advisor">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DDA52D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Prof. Faculty</span>
+        </span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Live Accessibility Region -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite"></div>
+
+  <!-- MAIN VIEWPORT CONTAINER (Soft Lavender Background #F4EDF7) -->
+  <main class="main-wrapper page-container max-container">
+
+    <!-- ================================================================= -->
+    <!-- VIEW 1: DASHBOARD / ACADEMIC OVERVIEW (Reference Screenshot)       -->
+    <!-- ================================================================= -->
+    <section id="view-dashboard" class="section-container view-panel active" role="tabpanel" aria-labelledby="tab-dashboard">
+      
+      <!-- Top Section Header -->
+      <header class="section-hero-header">
+        <div class="hero-title-group">
+          <span class="gold-accent-bar" aria-hidden="true"></span>
+          <h1 class="hero-title">Academic overview</h1>
+        </div>
+        <p class="hero-subtitle">
+          A clear view of student progress, performance patterns and students who may need support.
+        </p>
+
+        <!-- Decorative Academic Books Line Art (from screenshot) -->
+        <div class="hero-decorative-illustration" aria-hidden="true">
+          <svg width="130" height="75" viewBox="0 0 130 75" fill="none" stroke="#B8A3BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Stack of books -->
+            <path d="M25 45 L95 28 L115 36 L45 53 Z"></path>
+            <path d="M25 45 L25 55 L95 38 L95 28"></path>
+            <path d="M45 53 L45 63 L115 46 L115 36"></path>
+            
+            <path d="M20 58 L90 41 L110 49 L40 66 Z"></path>
+            <path d="M20 58 L20 68 L90 51 L90 41"></path>
+            <path d="M40 66 L40 73 L110 56 L110 49"></path>
+
+            <!-- Decorative leafy branch -->
+            <path d="M102 24 C108 14 116 10 125 12"></path>
+            <path d="M108 18 C112 16 116 17 118 20 C114 20 110 19 108 18 Z" fill="#E8DDEB"></path>
+            <path d="M115 13 C120 10 124 11 126 14 C122 14 118 13 115 13 Z" fill="#E8DDEB"></path>
+            <path d="M120 22 C124 20 128 21 129 24 C125 24 122 23 120 22 Z" fill="#E8DDEB"></path>
+          </svg>
+        </div>
+      </header>
+
+      <!-- 4 Top KPI Cards Grid -->
+      <div class="kpi-grid kpi-cards-grid">
+        
+        <!-- KPI 1: Total Students -->
+        <div class="kpi-card kpi-card-total">
+          <div class="kpi-header-row">
+            <span class="kpi-icon-wrap icon-purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#542447" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </span>
+            <div class="kpi-titles">
+              <span class="kpi-label">Total Students</span>
+              <span class="kpi-value-num" id="kpi-total-val">200</span>
+            </div>
+          </div>
+          <p class="kpi-desc">Enrolled students monitored in this cohort.</p>
+        </div>
+
+        <!-- KPI 2: On Track -->
+        <div class="kpi-card kpi-card-teal">
+          <div class="kpi-header-row">
+            <span class="kpi-icon-wrap icon-teal">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#119B91" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </span>
+            <div class="kpi-titles">
+              <span class="kpi-label">On Track</span>
+              <span class="kpi-value-num color-teal" id="kpi-ontrack-val">93</span>
+            </div>
+            <div class="kpi-percentage-badge badge-teal">
+              <strong id="kpi-ontrack-pct">46.5%</strong>
+              <span>of cohort</span>
+            </div>
+          </div>
+          <p class="kpi-desc">Performing well. Keep the routine going.</p>
+        </div>
+
+        <!-- KPI 3: Needs Attention -->
+        <div class="kpi-card kpi-card-gold">
+          <div class="kpi-header-row">
+            <span class="kpi-icon-wrap icon-gold">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DDA52D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </span>
+            <div class="kpi-titles">
+              <span class="kpi-label">Needs Attention</span>
+              <span class="kpi-value-num color-gold" id="kpi-attention-val">69</span>
+            </div>
+            <div class="kpi-percentage-badge badge-gold">
+              <strong id="kpi-attention-pct">34.5%</strong>
+              <span>of cohort</span>
+            </div>
+          </div>
+          <p class="kpi-desc">Showing some concerns. A short mentoring chat is advised.</p>
+        </div>
+
+        <!-- KPI 4: At Risk -->
+        <div class="kpi-card kpi-card-coral">
+          <div class="kpi-header-row">
+            <span class="kpi-icon-wrap icon-coral">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF625C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </span>
+            <div class="kpi-titles">
+              <span class="kpi-label">At Risk</span>
+              <span class="kpi-value-num color-coral" id="kpi-atrisk-val">38</span>
+            </div>
+            <div class="kpi-percentage-badge badge-coral">
+              <strong id="kpi-atrisk-pct">19.0%</strong>
+              <span>of cohort</span>
+            </div>
+          </div>
+          <p class="kpi-desc">Higher risk of poor outcomes. Prioritise intervention and support.</p>
+        </div>
+
+      </div>
+
+      <!-- Main Two-Column Layout (Matching Screenshot) -->
+      <div class="grid-overview-2col dashboard-columns-grid">
+        
+        <!-- LEFT COLUMN: Performance Distribution + Students Needing Attention -->
+        <div class="overview-left-stack dashboard-left-col">
+          
+          <!-- Card A: Performance Distribution -->
+          <div class="card card-performance-distribution">
+            <h2 class="card-title">Performance distribution <span class="card-title-sub">(by predicted academic standing)</span></h2>
+            
+            <div class="distribution-bar-wrap" id="dash-distribution-bar" role="progressbar" aria-label="Performance distribution">
+              <div class="dist-seg seg-teal" id="seg-teal" style="width: 46.5%;">46.5%</div>
+              <div class="dist-seg seg-gold" id="seg-gold" style="width: 34.5%;">34.5%</div>
+              <div class="dist-seg seg-coral" id="seg-coral" style="width: 19.0%;">19.0%</div>
+            </div>
+
+            <div class="distribution-legend-row">
+              <span class="legend-item">
+                <span class="legend-swatch swatch-teal"></span>
+                <span id="leg-text-ontrack">On Track: 93 students (46.5%)</span>
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch swatch-gold"></span>
+                <span id="leg-text-attention">Needs Attention: 69 students (34.5%)</span>
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch swatch-coral"></span>
+                <span id="leg-text-atrisk">At Risk: 38 students (19.0%)</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Card B: Students Needing Attention -->
+          <div class="card card-students-needing-attention">
+            <div class="card-header-flex">
+              <div class="header-with-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#542447" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <line x1="19" y1="8" x2="19" y2="14"></line>
+                  <line x1="22" y1="11" x2="16" y2="11"></line>
+                </svg>
+                <div>
+                  <h2 class="card-title">Students needing attention</h2>
+                  <p class="card-subtitle">A sample of students predicted as &ldquo;Needs Attention&rdquo; or &ldquo;At Risk&rdquo; (higher priority for follow-up).</p>
+                </div>
+              </div>
+              <a href="#records" class="btn btn-outline btn-view-all">View all students &rarr;</a>
+            </div>
+
+            <!-- Table with lavender header -->
+            <div class="table-container">
+              <table class="academic-table" id="urgent-students-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>CGPA</th>
+                    <th>Internal / 40</th>
+                    <th>Attendance</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="urgent-students-tbody">
+                  <tr>
+                    <td><strong>S-033</strong></td>
+                    <td>6.1</td>
+                    <td>18</td>
+                    <td>64%</td>
+                    <td><span class="status-pill pill-coral">At Risk</span></td>
+                    <td>
+                      <div class="table-action-links">
+                        <a href="#predictor" class="table-link link-predict" data-id="S-033">Predict</a>
+                        <span class="link-sep">|</span>
+                        <a href="#predictor" class="table-link link-view" data-id="S-033">View</a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-052</strong></td>
+                    <td>5.4</td>
+                    <td>15</td>
+                    <td>58%</td>
+                    <td><span class="status-pill pill-coral">At Risk</span></td>
+                    <td>
+                      <div class="table-action-links">
+                        <a href="#predictor" class="table-link link-predict" data-id="S-052">Predict</a>
+                        <span class="link-sep">|</span>
+                        <a href="#predictor" class="table-link link-view" data-id="S-052">View</a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-091</strong></td>
+                    <td>4.9</td>
+                    <td>19</td>
+                    <td>61%</td>
+                    <td><span class="status-pill pill-coral">At Risk</span></td>
+                    <td>
+                      <div class="table-action-links">
+                        <a href="#predictor" class="table-link link-predict" data-id="S-091">Predict</a>
+                        <span class="link-sep">|</span>
+                        <a href="#predictor" class="table-link link-view" data-id="S-091">View</a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-075</strong></td>
+                    <td>6.8</td>
+                    <td>22</td>
+                    <td>79%</td>
+                    <td><span class="status-pill pill-gold">Needs Attention</span></td>
+                    <td>
+                      <div class="table-action-links">
+                        <a href="#predictor" class="table-link link-predict" data-id="S-075">Predict</a>
+                        <span class="link-sep">|</span>
+                        <a href="#predictor" class="table-link link-view" data-id="S-075">View</a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-118</strong></td>
+                    <td>6.2</td>
+                    <td>29</td>
+                    <td>76%</td>
+                    <td><span class="status-pill pill-gold">Needs Attention</span></td>
+                    <td>
+                      <div class="table-action-links">
+                        <a href="#predictor" class="table-link link-predict" data-id="S-118">Predict</a>
+                        <span class="link-sep">|</span>
+                        <a href="#predictor" class="table-link link-view" data-id="S-118">View</a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footnote" id="urgent-table-footnote">
+              Showing 5 of 107 students needing attention.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: How Performance Is Assessed -->
+        <div class="overview-right-stack dashboard-right-col">
+          <div class="card card-assessment-guide">
+            
+            <div class="guide-header">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#119B91" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+              </svg>
+              <div>
+                <h2 class="card-title">How performance is assessed</h2>
+                <p class="card-subtitle">Each student is evaluated using two complementary checks.</p>
+              </div>
+            </div>
+
+            <!-- Evaluation 1: Academic Standing -->
+            <div class="assessment-block">
+              <div class="block-title-row">
+                <span class="number-circle">1</span>
+                <h3 class="block-heading">Academic standing (Decision Tree prediction)</h3>
+              </div>
+              <p class="block-desc">
+                A machine learning model (Decision Tree Classifier) analyses four academic indicators to predict the student's current standing:
+              </p>
+
+              <!-- 4 Feature Mini Cards -->
+              <div class="features-mini-grid">
+                <div class="feature-mini-card">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#542447" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path></svg>
+                  <strong class="feat-name">CGPA</strong>
+                  <span class="feat-range">(0.0 &ndash; 10.0)</span>
+                </div>
+                <div class="feature-mini-card">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#542447" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  <strong class="feat-name">Internal</strong>
+                  <span class="feat-range">(0 &ndash; 40)</span>
+                </div>
+                <div class="feature-mini-card">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#542447" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <strong class="feat-name">Attendance</strong>
+                  <span class="feat-range">(0 &ndash; 100%)</span>
+                </div>
+                <div class="feature-mini-card">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#542447" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                  <strong class="feat-name">Assignment</strong>
+                  <span class="feat-range">(0.0 &ndash; 10.0)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Evaluation 2: Exam Eligibility -->
+            <div class="assessment-block">
+              <div class="block-title-row">
+                <span class="number-circle">2</span>
+                <h3 class="block-heading">Exam eligibility (Attendance threshold)</h3>
+              </div>
+              <p class="block-desc">
+                Independently checked using a simple institutional rule:
+              </p>
+
+              <div class="eligibility-banner-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#119B91" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <polyline points="16 11 18 13 22 9"></polyline>
+                </svg>
+                <div class="banner-rule-text">
+                  <span class="banner-title">Eligible for exam</span>
+                  <span class="banner-eq">=</span>
+                  <strong class="banner-condition">Attendance &ge; 75%</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary Teal CTA Button -->
+            <a href="#predictor" class="btn btn-teal btn-predict-cta">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span>Predict student performance &rarr;</span>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 2: STUDENTS / STUDENT RECORDS DIRECTORY                      -->
+    <!-- ================================================================= -->
+    <section id="view-records" class="section-container view-panel" role="tabpanel" aria-labelledby="tab-records" style="display: none;">
+      
+      <header class="section-hero-header">
+        <div class="hero-title-group">
+          <span class="gold-accent-bar" aria-hidden="true"></span>
+          <h1 class="hero-title">Student records</h1>
+        </div>
+        <p class="hero-subtitle">
+          Filter by performance, search by student ID or CGPA, and inspect individual academic indicators.
+        </p>
+      </header>
+
+      <div class="card card-directory-table">
+        
+        <!-- Directory Toolbar -->
+        <div class="directory-toolbar">
+          
+          <!-- Filter Tabs + Add Student Button -->
+          <div class="directory-actions-row">
+            <div class="category-filters-pills" role="radiogroup" aria-label="Filter students by standing">
+              <button type="button" class="filter-pill active" data-filter="ALL" aria-checked="true">
+                All Students <span class="filter-count" id="count-all">0</span>
+              </button>
+              <button type="button" class="filter-pill pill-teal" data-filter="On Track" aria-checked="false">
+                On Track <span class="filter-count" id="count-ontrack">0</span>
+              </button>
+              <button type="button" class="filter-pill pill-gold" data-filter="Needs Attention" aria-checked="false">
+                Needs Attention <span class="filter-count" id="count-attention">0</span>
+              </button>
+              <button type="button" class="filter-pill pill-coral" data-filter="At Risk" aria-checked="false">
+                At Risk <span class="filter-count" id="count-atrisk">0</span>
+              </button>
+            </div>
+
+            <button type="button" class="btn btn-teal" id="btn-add-student">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Student</span>
+            </button>
+          </div>
+
+          <!-- Search & Multi-Filters Row -->
+          <div class="directory-actions-row filters-secondary-row">
+            <div class="search-input-wrap" style="flex: 1; min-width: 240px;">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#766779" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input 
+                type="search" 
+                id="search-student-query" 
+                class="academic-search-input" 
+                placeholder="Search by student name or USN..." 
+                aria-label="Search students by name or USN"
+                style="width: 100%;"
+              >
+            </div>
+
+            <!-- Semester Filter -->
+            <select id="filter-semester" class="academic-select" aria-label="Filter by semester">
+              <option value="ALL">All Semesters</option>
+              <option value="Semester 1">Semester 1</option>
+              <option value="Semester 2">Semester 2</option>
+              <option value="Semester 3">Semester 3</option>
+              <option value="Semester 4">Semester 4</option>
+              <option value="Semester 5">Semester 5</option>
+              <option value="Semester 6">Semester 6</option>
+              <option value="Semester 7">Semester 7</option>
+              <option value="Semester 8">Semester 8</option>
+            </select>
+
+            <!-- Section Filter -->
+            <select id="filter-section" class="academic-select" aria-label="Filter by section">
+              <option value="ALL">All Sections</option>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
+            </select>
+
+            <!-- Attendance Eligibility Filter -->
+            <select id="filter-eligibility" class="academic-select" aria-label="Filter by attendance eligibility">
+              <option value="ALL">All Attendance</option>
+              <option value="Eligible">Eligible (&ge; 75%)</option>
+              <option value="Not Eligible">Not Eligible (&lt; 75%)</option>
+            </select>
+
+            <!-- Clear Filters Button -->
+            <button type="button" id="btn-clear-filters" class="btn btn-outline btn-sm">
+              Clear Filters
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Student Records Full Table -->
+        <div class="table-container">
+          <table class="academic-table" id="full-records-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="usn">USN &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="name">Student Name &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="semester">Semester &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="section">Section &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="cgpa">CGPA &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="internal_marks">Internal Marks &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="attendance">Attendance &#x25B4;&#x25BE;</th>
+                <th class="sortable" data-sort="assignment_marks">Assignment Marks &#x25B4;&#x25BE;</th>
+                <th>Academic Status</th>
+                <th style="text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="full-records-tbody">
+              <!-- Rendered via JS from /api/students -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="directory-table-footer">
+          <span class="results-tally" id="records-tally-text">Showing 0 registered students.</span>
+          <span class="footnote-note">Registered students are stored in MySQL and evaluated dynamically by the Decision Tree model.</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 3: PREDICTOR / STUDENT PERFORMANCE PREDICTOR                 -->
+    <!-- ================================================================= -->
+    <section id="view-predictor" class="section-container view-panel" role="tabpanel" aria-labelledby="tab-predictor" style="display: none;">
+      
+      <header class="section-hero-header">
+        <div class="hero-title-group">
+          <span class="gold-accent-bar" aria-hidden="true"></span>
+          <h1 class="hero-title">Student Performance Predictor</h1>
+        </div>
+        <p class="hero-subtitle">
+          Enter academic information to evaluate a student's current academic standing and independent exam eligibility.
+        </p>
+      </header>
+
+      <div class="predictor-grid-2col">
+        
+        <!-- Left Column: Academic Inputs Card -->
+        <div class="card predictor-inputs-card">
+          <div class="card-header-flex">
+            <div>
+              <h2 class="card-title">Academic Indicators</h2>
+              <p class="card-subtitle">Adjust indicators or load a student from records to simulate Decision Tree classification:</p>
+            </div>
+            <button type="button" id="btn-reset-predictor" class="btn btn-outline btn-sm">
+              Reset to Class Average
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="presets-row">
+            <span class="presets-label">Quick Presets:</span>
+            <button type="button" class="btn-chip" id="preset-ontrack">High Performer (CGPA 8.5)</button>
+            <button type="button" class="btn-chip" id="preset-attention">Attention Case (CGPA 7.5)</button>
+            <button type="button" class="btn-chip" id="preset-atrisk">At-Risk Case (CGPA 5.2)</button>
+          </div>
+
+          <form id="prediction-form" class="predictor-form" onsubmit="return false;">
+            
+            <!-- Input 1: CGPA -->
+            <div class="input-control-block">
+              <div class="input-label-row">
+                <label for="slider-cgpa" class="control-label">
+                  <strong>Previous Semester CGPA</strong>
+                  <span class="control-scale">(Scale: 0.0 &ndash; 10.0)</span>
+                </label>
+                <div class="input-val-box">
+                  <input type="number" id="num-cgpa" class="numeric-direct-input" min="0" max="10" step="0.1" value="7.5" aria-label="CGPA value">
+                </div>
+              </div>
+              <input type="range" id="slider-cgpa" class="academic-slider" min="0" max="10" step="0.1" value="7.5" aria-label="Previous Semester CGPA Slider">
+              <div class="slider-marks-row">
+                <span>0.0</span>
+                <span>2.5</span>
+                <span>5.0</span>
+                <span>7.5</span>
+                <span>10.0</span>
+              </div>
+            </div>
+
+            <!-- Input 2: Internal Marks -->
+            <div class="input-control-block">
+              <div class="input-label-row">
+                <label for="slider-internal" class="control-label">
+                  <strong>Internal Examination Marks</strong>
+                  <span class="control-scale">(Maximum 40 marks)</span>
+                </label>
+                <div class="input-val-box">
+                  <input type="number" id="num-internal" class="numeric-direct-input" min="0" max="40" step="1" value="28" aria-label="Internal marks value">
+                </div>
+              </div>
+              <input type="range" id="slider-internal" class="academic-slider" min="0" max="40" step="1" value="28" aria-label="Internal Examination Marks Slider">
+              <div class="slider-marks-row">
+                <span>0</span>
+                <span>10</span>
+                <span>20</span>
+                <span>30</span>
+                <span>40</span>
+              </div>
+            </div>
+
+            <!-- Input 3: Attendance -->
+            <div class="input-control-block">
+              <div class="input-label-row">
+                <label for="slider-attendance" class="control-label">
+                  <strong>Attendance Percentage</strong>
+                  <span class="control-scale">(Regulatory benchmark: 75%)</span>
+                </label>
+                <div class="input-val-box">
+                  <input type="number" id="num-attendance" class="numeric-direct-input" min="0" max="100" step="1" value="75" aria-label="Attendance percentage value">
+                  <span class="unit-symbol">%</span>
+                </div>
+              </div>
+              <input type="range" id="slider-attendance" class="academic-slider" min="0" max="100" step="1" value="75" aria-label="Attendance Percentage Slider">
+              <div class="slider-marks-row">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span class="statutory-mark">75% (Rule)</span>
+                <span>100%</span>
+              </div>
+            </div>
+
+            <!-- Input 4: Assignment Marks -->
+            <div class="input-control-block">
+              <div class="input-label-row">
+                <label for="slider-assignment" class="control-label">
+                  <strong>Continuous Assignment Marks</strong>
+                  <span class="control-scale">(Maximum 10 marks)</span>
+                </label>
+                <div class="input-val-box">
+                  <input type="number" id="num-assignment" class="numeric-direct-input" min="0" max="10" step="0.1" value="7.5" aria-label="Assignment marks value">
+                </div>
+              </div>
+              <input type="range" id="slider-assignment" class="academic-slider" min="0" max="10" step="0.1" value="7.5" aria-label="Assignment Marks Slider">
+              <div class="slider-marks-row">
+                <span>0.0</span>
+                <span>2.5</span>
+                <span>5.0</span>
+                <span>7.5</span>
+                <span>10.0</span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-submit-row">
+              <button type="button" id="btn-run-prediction" class="btn btn-teal btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                <span>PREDICT PERFORMANCE</span>
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+
+        <!-- Right Column: Prediction Results Card -->
+        <div class="card predictor-results-card" id="predictor-results-card">
+          
+          <div class="results-header">
+            <span class="results-kicker">EVALUATION SUMMARY</span>
+            <span class="target-student-badge" id="res-student-tag">MANUAL SIMULATION</span>
+          </div>
+
+          <!-- Academic Standing Primary Result Banner -->
+          <div class="standing-result-box" id="res-standing-box">
+            <div class="standing-status-header">
+              <span class="status-indicator-icon" id="res-standing-icon"></span>
+              <div>
+                <span class="standing-small-title">PREDICTED ACADEMIC STANDING</span>
+                <h3 class="standing-category-text" id="res-category-text">Needs Attention</h3>
+              </div>
+            </div>
+            <p class="standing-recommendation-text" id="res-advice-text">
+              A short mentoring chat now can change the outcome.
+            </p>
+          </div>
+
+          <!-- Exam Eligibility Independent Box -->
+          <div class="exam-eligibility-box" id="res-eligibility-box">
+            <div class="eligibility-title-row">
+              <span class="eligibility-small-title">EXAM ELIGIBILITY (INDEPENDENT ATTENDANCE RULE)</span>
+              <span class="eligibility-pill" id="res-eligibility-pill">Eligible</span>
+            </div>
+            <p class="eligibility-explain-text" id="res-eligibility-text">
+              Attendance of 75% satisfies the institutional regulation. This regulatory norm does not alter the machine learning academic capability prediction.
+            </p>
+          </div>
+
+          <!-- Step-by-Step Mathematical Decision Tree Reasoner -->
+          <div class="tree-reasoning-card">
+            <h4 class="reasoning-title">Decision Tree Reasoning Path</h4>
+            <p class="reasoning-subtitle">How the model evaluated each input indicator against trained split thresholds:</p>
+            
+            <ol class="reasoning-steps-list" id="res-decision-steps">
+              <!-- Rendered dynamically from backend path_steps -->
+            </ol>
+          </div>
+
+          <!-- Link to Tree Animation in Model View -->
+          <div class="inspect-in-tree-box">
+            <a href="#model" id="link-drop-in-model" class="btn btn-outline btn-full">
+              <span>Watch This Student Fall Through The Decision Tree &rarr;</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 4: MODEL INFO & DECISION TREE ARCHITECTURE                   -->
+    <!-- ================================================================= -->
+    <section id="view-model" class="section-container view-panel" role="tabpanel" aria-labelledby="tab-model" style="display: none;">
+      
+      <header class="section-hero-header">
+        <div class="hero-title-group">
+          <span class="gold-accent-bar" aria-hidden="true"></span>
+          <h1 class="hero-title">Model information</h1>
+        </div>
+        <p class="hero-subtitle">
+          A Decision Tree asks a transparent series of yes/no questions, ending at one verified category. Every step can be independently audited.
+        </p>
+      </header>
+
+      <!-- Interactive SVG Decision Tree Visualizer -->
+      <div class="card model-tree-card">
+        
+        <div class="tree-controls-header">
+          <div>
+            <h2 class="card-title">Drop a student through the tree</h2>
+            <p class="tree-student-readout" id="tree-student-readout">
+              Uses marks from Predictor: CGPA 7.5 &middot; Internal 28 &middot; Attendance 75% &middot; Assignment 7.5
+            </p>
+          </div>
+          
+          <div class="tree-actions-group">
+            <button type="button" id="btn-drop-tree-marble" class="btn btn-teal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+              </svg>
+              <span>Drop Student</span>
+            </button>
+            <button type="button" id="btn-cascade-all-cohort" class="btn btn-outline">
+              Drop All 200 Cohort
+            </button>
+          </div>
+        </div>
+
+        <!-- SVG Tree Container -->
+        <div class="svg-tree-viewport" id="svg-tree-viewport">
+          <!-- Rendered via JS SVG -->
+        </div>
+
+        <div class="tree-result-status-banner" id="tree-result-status-banner">
+          Press <strong>Drop Student</strong> to see where the student lands. You can modify marks in the <a href="#predictor" class="link-plum">Student Predictor</a>.
+        </div>
+
+      </div>
+
+      <!-- Specs 2-Column Grid -->
+      <div class="model-specs-grid">
+        
+        <!-- Card 1: The Questions It Asks -->
+        <div class="card spec-card">
+          <h3 class="spec-card-title">The questions it asks</h3>
+          <p class="spec-card-subtitle">Transparent hierarchical split conditions evaluated at each depth level:</p>
+          
+          <div class="questions-numbered-list">
+            <div class="q-step-row">
+              <span class="q-step-num">1</span>
+              <div>
+                <strong>Is CGPA 7.60 or higher?</strong>
+                <p>If yes, check internal marks &ge; 26.4, then assignment &ge; 8.7.</p>
+              </div>
+            </div>
+
+            <div class="q-step-row">
+              <span class="q-step-num">2</span>
+              <div>
+                <strong>If no, is CGPA at least 5.58?</strong>
+                <p>If not, the student is routed to <span class="color-coral">At Risk</span>.</p>
+              </div>
+            </div>
+
+            <div class="q-step-row">
+              <span class="q-step-num">3</span>
+              <div>
+                <strong>Internal marks check:</strong>
+                <p>Thresholds &ge; 15.3 and &ge; 30.9 separate At Risk, Needs Attention, and On Track.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: How accurate is it? -->
+        <div class="card spec-card">
+          <h3 class="spec-card-title">How accurate is it?</h3>
+          <p class="spec-card-subtitle">Verified evaluation metrics from stratified train/test split:</p>
+
+          <div class="accuracy-metrics-tiles">
+            <div class="acc-tile">
+              <span class="acc-val color-gold" id="stat-train-acc">97.5%</span>
+              <span class="acc-label">Training (160 students)</span>
+            </div>
+            <div class="acc-tile">
+              <span class="acc-val color-gold" id="stat-test-acc">92.5%</span>
+              <span class="acc-label">Testing (40 students)</span>
+            </div>
+          </div>
+
+          <p class="acc-disclosure-text">
+            Training and testing sets were strictly isolated (80% / 20%), so the test score reflects completely unseen student records with zero data leakage.
+          </p>
+        </div>
+
+        <!-- Card 3: What matters most (Feature Importance) -->
+        <div class="card spec-card">
+          <h3 class="spec-card-title">What matters most (Feature Importance)</h3>
+          <p class="spec-card-subtitle">Gini importance weights assigned by the decision tree:</p>
+
+          <div class="feature-importance-bars" id="feature-importance-bars">
+            <!-- Dynamically populated from /api/model -->
+          </div>
+        </div>
+
+        <!-- Card 4: Algorithm Settings -->
+        <div class="card spec-card">
+          <h3 class="spec-card-title">Algorithm Settings</h3>
+          <p class="spec-card-subtitle">Hyperparameters configured to prevent overfitting while maximizing explainability:</p>
+
+          <dl class="kv-settings-list">
+            <div class="kv-row"><dt>Criterion</dt><dd>Gini impurity</dd></div>
+            <div class="kv-row"><dt>Max depth</dt><dd>4 levels</dd></div>
+            <div class="kv-row"><dt>Min samples to split</dt><dd>5</dd></div>
+            <div class="kv-row"><dt>Min samples per leaf</dt><dd>2</dd></div>
+            <div class="kv-row"><dt>Random State</dt><dd>42 (deterministic)</dd></div>
+            <div class="kv-row"><dt>Train / Test split</dt><dd>80% / 20%</dd></div>
+          </dl>
+        </div>
+
+        <!-- Card 5: Full Width Institutional Policy Defense & Viva FAQ -->
+        <div class="card spec-card full-width-spec-card">
+          <h3 class="spec-card-title">Why is attendance kept separate from academic prediction?</h3>
+          
+          <div class="viva-answers-grid">
+            <div class="viva-qa-item">
+              <h4 class="viva-q">Regulatory Policy vs. Cognitive Capability</h4>
+              <p class="viva-a">
+                Attendance below 75% is an administrative regulation, not a mathematical prediction of intellectual ability. Conflating regulatory compliance with academic capability produces severe algorithmic bias, obscuring capable students who missed class due to personal emergencies while hiding academic struggles of regular attendees.
+              </p>
+            </div>
+
+            <div class="viva-qa-item">
+              <h4 class="viva-q">Why Decision Trees Instead of Neural Networks?</h4>
+              <p class="viva-a">
+                University academic decisions have significant consequences on students' lives and career pathways. Faculty advisors, mentors, and students need transparent, explainable logic they can inspect and understand. A Decision Tree provides a step-by-step logic trail that can be audited and discussed openly.
+              </p>
+            </div>
+          </div>
+
+          <div class="synthetic-data-disclosure">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DDA52D" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>
+              <strong>Academic Audit Disclosure:</strong> Model evaluation metrics and distributions displayed here are derived from a controlled synthetic educational cohort of 200 records designed for research, simulation, and faculty defense.
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="global-academic-footer">
+    <div class="footer-inner max-container">
+      <div class="footer-left">
+        <strong>STUDENT PULSE</strong>
+        <span>Academic Performance Monitoring &amp; Early Intervention Decision Support System</span>
+      </div>
+      <div class="footer-right">
+        <span>Engine: Decision Tree (Gini &middot; Depth 4)</span>
+        <span class="footer-bullet">&bull;</span>
+        <span>Accuracy: 92.5% Test / 97.5% Train</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================================================================= -->
+  <!-- MODALS & DIALOGS (Plum / Soft Lavender Design System)             -->
+  <!-- ================================================================= -->
+
+  <!-- Modal 1: Add / Edit Student Form Modal -->
+  <div class="modal-backdrop" id="modal-student-form" role="dialog" aria-modal="true" aria-labelledby="student-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h3 id="student-modal-title">Add New Student</h3>
+          <p id="student-modal-subtitle">Enter student information to evaluate standing and persist to database.</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-form-modal" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <form id="student-form" onsubmit="return false;">
+        <input type="hidden" id="student-id-field" value="">
+        
+        <div class="modal-body">
+          <div class="form-error-banner" id="form-student-error" role="alert"></div>
+
+          <!-- Section A: Personal Information -->
+          <div class="form-section-header">Personal Information</div>
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label for="input-usn" class="form-label">University Seat Number (USN) <span class="req">*</span></label>
+              <input type="text" id="input-usn" class="form-control" placeholder="e.g. 1MS21CS001" required>
+            </div>
+
+            <div class="form-group">
+              <label for="input-name" class="form-label">Full Name <span class="req">*</span></label>
+              <input type="text" id="input-name" class="form-control" placeholder="e.g. Adarsh M" required>
+            </div>
+
+            <div class="form-group">
+              <label for="input-email" class="form-label">Email Address</label>
+              <input type="email" id="input-email" class="form-control" placeholder="e.g. student@university.edu">
+            </div>
+
+            <div class="form-group">
+              <label for="input-phone" class="form-label">Phone Number</label>
+              <input type="tel" id="input-phone" class="form-control" placeholder="e.g. +91 9876543210">
+            </div>
+
+            <div class="form-group">
+              <label for="input-dept" class="form-label">Department</label>
+              <select id="input-dept" class="form-control">
+                <option value="Computer Science">Computer Science</option>
+                <option value="Information Science">Information Science</option>
+                <option value="Electronics & Communication">Electronics &amp; Communication</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Artificial Intelligence & ML">Artificial Intelligence &amp; ML</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="input-semester" class="form-label">Semester</label>
+              <select id="input-semester" class="form-control">
+                <option value="Semester 1">Semester 1</option>
+                <option value="Semester 2">Semester 2</option>
+                <option value="Semester 3">Semester 3</option>
+                <option value="Semester 4">Semester 4</option>
+                <option value="Semester 5" selected>Semester 5</option>
+                <option value="Semester 6">Semester 6</option>
+                <option value="Semester 7">Semester 7</option>
+                <option value="Semester 8">Semester 8</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="input-section" class="form-label">Section</label>
+              <select id="input-section" class="form-control">
+                <option value="A" selected>Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+                <option value="D">Section D</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section B: Academic Information -->
+          <div class="form-section-header" style="margin-top: 10px;">Academic Indicators</div>
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label for="input-cgpa" class="form-label">Previous Semester CGPA (0.0 &ndash; 10.0) <span class="req">*</span></label>
+              <input type="number" id="input-cgpa" class="form-control" min="0" max="10" step="0.01" placeholder="e.g. 8.25" required>
+            </div>
+
+            <div class="form-group">
+              <label for="input-internal" class="form-label">Internal Marks (0 &ndash; 40) <span class="req">*</span></label>
+              <input type="number" id="input-internal" class="form-control" min="0" max="40" step="0.5" placeholder="e.g. 32" required>
+            </div>
+
+            <div class="form-group">
+              <label for="input-attendance" class="form-label">Attendance Percentage (0 &ndash; 100%) <span class="req">*</span></label>
+              <input type="number" id="input-attendance" class="form-control" min="0" max="100" step="0.1" placeholder="e.g. 85" required>
+            </div>
+
+            <div class="form-group">
+              <label for="input-assignment" class="form-label">Assignment Marks (0.0 &ndash; 10.0) <span class="req">*</span></label>
+              <input type="number" id="input-assignment" class="form-control" min="0" max="10" step="0.1" placeholder="e.g. 8.5" required>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-student-form">Cancel</button>
+          <button type="button" class="btn btn-teal" id="btn-save-student">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: View Student Profile Modal -->
+  <div class="modal-backdrop" id="modal-student-view" role="dialog" aria-modal="true" aria-labelledby="view-student-name">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h3 id="view-student-name">Student Academic Profile</h3>
+          <p id="view-student-usn-badge" style="font-family: var(--font-mono); font-weight: 700; color: var(--color-plum-primary);"></p>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-view-modal" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Personal Meta Summary -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #FAF6FB; border: 1px solid #ECE0EF; border-radius: 10px; padding: 14px 16px;">
+          <div>
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted);">Department</span>
+            <strong style="display: block; font-size: 13.5px; color: var(--color-plum-deep);" id="view-dept-val">-</strong>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted);">Semester &amp; Section</span>
+            <strong style="display: block; font-size: 13.5px; color: var(--color-plum-deep);" id="view-sem-sec-val">-</strong>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted);">Contact Email</span>
+            <strong style="display: block; font-size: 13px; color: var(--color-plum-deep); overflow: hidden; text-overflow: ellipsis;" id="view-email-val">-</strong>
+          </div>
+        </div>
+
+        <!-- 4 Metric Tiles -->
+        <div class="features-mini-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 6px;">
+          <div class="feature-mini-card">
+            <strong class="feat-name" style="font-size: 13px;">CGPA</strong>
+            <span style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--color-plum-deep);" id="view-cgpa-val">0.0</span>
+            <span class="feat-range">(Scale 0 &ndash; 10)</span>
+          </div>
+          <div class="feature-mini-card">
+            <strong class="feat-name" style="font-size: 13px;">Internal</strong>
+            <span style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--color-plum-deep);" id="view-internal-val">0</span>
+            <span class="feat-range">(Max 40)</span>
+          </div>
+          <div class="feature-mini-card">
+            <strong class="feat-name" style="font-size: 13px;">Attendance</strong>
+            <span style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--color-plum-deep);" id="view-attendance-val">0%</span>
+            <span class="feat-range">(Min 75%)</span>
+          </div>
+          <div class="feature-mini-card">
+            <strong class="feat-name" style="font-size: 13px;">Assignment</strong>
+            <span style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--color-plum-deep);" id="view-assignment-val">0</span>
+            <span class="feat-range">(Max 10)</span>
+          </div>
+        </div>
+
+        <!-- Academic Standing Box -->
+        <div class="standing-result-box" id="view-standing-box" style="margin-top: 6px;">
+          <div class="standing-status-header">
+            <div id="view-standing-icon"></div>
+            <div>
+              <span class="standing-small-title">PREDICTED ACADEMIC STANDING (DECISION TREE)</span>
+              <h3 class="standing-category-text" id="view-category-val">On Track</h3>
+            </div>
+          </div>
+          <p class="standing-recommendation-text" id="view-advice-val">
+            Performing well. Keep the academic routine and semester milestones going.
+          </p>
+        </div>
+
+        <!-- Exam Eligibility Box -->
+        <div class="exam-eligibility-box" style="margin-top: -6px;">
+          <div class="eligibility-title-row">
+            <span class="eligibility-small-title">EXAM ELIGIBILITY (INDEPENDENT ATTENDANCE RULE)</span>
+            <span class="eligibility-pill pill-eligible" id="view-eligibility-pill">Eligible</span>
+          </div>
+          <p class="eligibility-explain-text" id="view-eligibility-explain">
+            Attendance satisfies institutional regulation (&ge; 75%).
+          </p>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="btn-close-view-footer">Close</button>
+        <button type="button" class="btn btn-teal" id="btn-view-to-edit">Edit Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Delete Student Confirmation Modal -->
+  <div class="modal-backdrop" id="modal-student-delete" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h3 id="delete-modal-title" style="color: #EF625C;">Confirm Student Deletion</h3>
+          <p>This action cannot be undone.</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-delete-modal" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 14.5px; color: var(--color-text-primary); line-height: 1.5;">
+          Are you sure you want to permanently delete registered student <strong id="delete-student-name-usn" style="color: var(--color-plum-deep);"></strong>?
+        </p>
+        <p style="font-size: 13px; color: var(--color-text-muted); margin-top: -8px;">
+          The student record and associated academic metrics will be permanently removed from the MySQL database.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="btn-cancel-delete">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete Student</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Vanilla JavaScript -->
+  <script src="/static/app.js?v=8.0"></script>
+</body>
+</html>

@@ -1,37 +1,11 @@
 services:
   - type: web
-    name: smart-inventory-api
-    runtime: node
+    name: the-drop-academic-predictor
+    runtime: python
     plan: free
-    region: singapore
-    rootDir: backend
-    buildCommand: npm ci
-    startCommand: npm start
-    healthCheckPath: /api/health
-    secretFiles:
-      - name: aiven-ca.pem
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DB_HOST
-        value: mysql-37e1f16a-work-ae9c.d.aivencloud.com
-      - key: DB_PORT
-        value: "24803"
-      - key: DB_USER
-        value: avnadmin
-      - key: DB_NAME
-        value: defaultdb
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_SSL
-        value: "true"
-      - key: DB_SSL_REJECT_UNAUTHORIZED
-        value: "true"
-      - key: DB_SSL_CA_PATH
-        value: /etc/secrets/aiven-ca.pem
-      - key: JWT_EXPIRES_IN
-        value: 24h
-      - key: JWT_SECRET
-        generateValue: true
-      - key: CLIENT_URL
-        value: https://smart-inventory-rouge-theta.vercel.app
+      - key: PYTHON_VERSION
+        value: 3.11.9
